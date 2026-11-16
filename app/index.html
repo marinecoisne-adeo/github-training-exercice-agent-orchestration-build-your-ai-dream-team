@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Project Pulse</title>
+  <meta name="description" content="Project Pulse: see the status, priority and recent activity of every team project at a glance.">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="site-header">
+    <h1 class="site-title">Project Pulse</h1>
+    <p class="site-tagline">The state of every team project at a glance: status, priority and recent activity.</p>
+  </header>
+
+  <main id="dashboard" class="dashboard">
+    <section class="pulse-summary" aria-label="Project status summary" id="pulse-summary"></section>
+
+    <p id="status-message" class="status-message" role="status" aria-live="polite">Loading projects…</p>
+
+    <section class="projects" aria-labelledby="projects-heading">
+      <h2 id="projects-heading">Projects</h2>
+      <ul id="project-list" class="project-grid" role="list"></ul>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <p id="footer-note">Data source: <code>project-data.json</code> (static sample data).</p>
+  </footer>
+
+  <script>
+    (function () {
+      'use strict';
+
+      var DATA_URL = 'project-data.json';
+
+      var STATUS_LABELS = {
+        'on-track': 'On track',
+        'at-risk': 'At risk',
+        'blocked': 'Blocked',
+        'completed': 'Completed',
+        'unknown': 'Unknown'
+      };
+      var STATUS_ORDER = ['on-track', 'at-risk', 'blocked', 'completed'];
+
+      var PRIORITY_LABELS = {
+        'high': 'High priority',
+        'medium': 'Medium priority',
+        'low': 'Low priority'
+      };
+
+      var summaryEl = document.getElementById('pulse-summary');
+      var statusMessageEl = document.getElementById('status-message');
+      var projectListEl = document.getElementById('project-list');
+      var footerNoteEl = document.getElementById('footer-note');
+
+      function normaliseValue(value) {
+        return String(value == null ? '' : value).trim().toLowerCase();
+      }
+
+      function toStatusKey(status) {
+        var key = normaliseValue(status);
+        return Object.prototype.hasOwnProperty.call(STATUS_LABELS, key) && key !== 'unknown' ? key : 'unknown';
+      }
+
+      function toPriorityKey(priority) {
+        var key = normaliseValue(priority);
+        return Object.prototype.hasOwnProperty.call(PRIORITY_LABELS, key) ? key : 'low';
+      }
+
+      function statusText(status, statusKey) {
+        if (statusKey === 'unknown') {
+          return status ? 'Unknown (' + status + ')' : STATUS_LABELS.unknown;
+        }
+        return STATUS_LABELS[statusKey];
+      }
+
+      function priorityText(priority, priorityKey) {
+        if (normaliseValue(priority) !== priorityKey) {
+          return priority ? 'Priority: ' + priority : PRIORITY_LABELS.low;
+        }
+        return PRIORITY_LABELS[priorityKey];
+      }
+
+      function setMessage(text, isError) {
+        statusMessageEl.textContent = text;
+        statusMessageEl.classList.toggle('status-message--error', Boolean(isError));
+        statusMessageEl.hidden = !text;
+      }
+
+      function createElement(tagName, className, text) {
+        var element = document.createElement(tagName);
+        if (className) {
+          element.className = className;
+        }
+        if (text != null) {
+          element.textContent = text;
+        }
+        return element;
+      }
+
+      function addMetaRow(list, term, value, valueClassName) {
+        list.appendChild(createElement('dt', null, term));
+        list.appendChild(createElement('dd', valueClassName, value));
+      }
+
+      function createProjectCard(project) {
+        var statusKey = toStatusKey(project.status);
+        var priorityKey = toPriorityKey(project.priority);
+
+        var card = createElement('li', 'project-card');
+        card.setAttribute('data-status', statusKey);
+        card.setAttribute('data-priority', priorityKey);
+
+        var body = createElement('article', 'project-card__body');
+        body.appendChild(createElement('h3', 'project-name', project.name || 'Untitled project'));
+
+        var badges = createElement('div', 'project-badges');
+        badges.appendChild(createElement(
+          'span',
+          'status-badge status-badge--' + statusKey,
+          statusText(project.status, statusKey)
+        ));
+        badges.appendChild(createElement(
+          'span',
+          'priority-badge priority-badge--' + priorityKey,
+          priorityText(project.priority, priorityKey)
+        ));
+        body.appendChild(badges);
+
+        var meta = createElement('dl', 'project-meta');
+        addMetaRow(meta, 'Owner', project.owner || 'Unassigned', 'project-owner');
+        addMetaRow(meta, 'Recent activity', project.recentActivity || 'No recent activity recorded', 'project-activity');
+        body.appendChild(meta);
+
+        if (project.summary) {
+          body.appendChild(createElement('p', 'project-summary', project.summary));
+        }
+
+        card.appendChild(body);
+        return card;
+      }
+
+      function renderSummary(projects) {
+        var counts = { 'on-track': 0, 'at-risk': 0, 'blocked': 0, 'completed': 0, 'unknown': 0 };
+        projects.forEach(function (project) {
+          counts[toStatusKey(project.status)] += 1;
+        });
+
+        var keys = STATUS_ORDER.slice();
+        if (counts.unknown > 0) {
+          keys.push('unknown');
+        }
+
+        summaryEl.replaceChildren();
+        keys.forEach(function (key) {
+          var chip = createElement('div', 'summary-chip summary-chip--' + key);
+          chip.appendChild(createElement('span', 'summary-count', String(counts[key])));
+          chip.appendChild(createElement('span', 'summary-label', STATUS_LABELS[key]));
+          summaryEl.appendChild(chip);
+        });
+      }
+
+      function renderEmptyState() {
+        var projectsSection = projectListEl.parentElement;
+        var existing = projectsSection.querySelector('.empty-state');
+        if (!existing) {
+          projectsSection.appendChild(createElement('p', 'empty-state', 'No projects to show yet.'));
+        }
+      }
+
+      function renderFooter(lastUpdated) {
+        if (lastUpdated) {
+          footerNoteEl.appendChild(document.createTextNode(' Last updated: ' + lastUpdated + '.'));
+        }
+      }
+
+      function render(data) {
+        if (!data || !Array.isArray(data.projects)) {
+          throw new Error('The data file is missing a "projects" array.');
+        }
+
+        var projects = data.projects;
+        renderSummary(projects);
+        renderFooter(data.lastUpdated);
+        projectListEl.replaceChildren();
+
+        if (projects.length === 0) {
+          setMessage('', false);
+          renderEmptyState();
+          return;
+        }
+
+        projects.forEach(function (project) {
+          projectListEl.appendChild(createProjectCard(project || {}));
+        });
+
+        var activeCount = projects.filter(function (project) {
+          return toStatusKey(project && project.status) !== 'completed';
+        }).length;
+        setMessage(
+          'Showing ' + projects.length + ' project' + (projects.length === 1 ? '' : 's') +
+          ' (' + activeCount + ' active).',
+          false
+        );
+      }
+
+      function showError(error) {
+        var servedFromFile = window.location.protocol === 'file:';
+        var reason = error && error.message ? error.message : String(error);
+        var hint = servedFromFile
+          ? 'This page was opened directly from disk (file://), which blocks fetch(). '
+          : '';
+        setMessage(
+          'Could not load project data (' + reason + '). ' + hint +
+          'Serve the app folder over HTTP, for example with "Run Project Pulse Dashboard" ' +
+          '(python3 -m http.server 5500), then open http://localhost:5500/index.html.',
+          true
+        );
+      }
+
+      setMessage('Loading projects…', false);
+
+      fetch(DATA_URL, { cache: 'no-store' })
+        .then(function (response) {
+          if (!response.ok) {
+            throw new Error('HTTP ' + response.status + ' ' + response.statusText + ' for ' + DATA_URL);
+          }
+          return response.json();
+        })
+        .then(render)
+        .catch(showError);
+    })();
+  </script>
+</body>
+</html>

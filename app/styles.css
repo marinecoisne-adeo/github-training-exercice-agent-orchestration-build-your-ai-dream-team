@@ -1,0 +1,609 @@
+/* ==========================================================================
+   Project Pulse — dashboard styles
+   Owner: Designer. Follows Shared contract B in docs/project-pulse-plan.md.
+
+   Contrast notes (WCAG 2.x, approximate ratios, text on background):
+     Body text      #1f2937 on #f4f6fb (page)        ~14.0:1
+     Body text      #1f2937 on #ffffff (card)        ~14.7:1
+     Muted text     #4b5563 on #ffffff               ~ 7.6:1
+     Header title   #ffffff on #312e81 (gradient)    ~11.0:1 (darkest stop #1e1b4b ~16:1)
+     Tagline        #e0e7ff on #4338ca (lightest)    ~ 6.3:1
+     Status on-track   #166534 on #dcfce7            ~ 6.5:1
+     Status at-risk    #92400e on #fef3c7            ~ 6.4:1
+     Status blocked    #991b1b on #fee2e2            ~ 6.8:1
+     Status completed  #1e40af on #dbeafe            ~ 7.2:1
+     Status unknown    #374151 on #f3f4f6            ~ 9.3:1
+     Priority high     #ffffff on #b42318 (filled)   ~ 6.2:1
+     Priority medium   #92400e on #fffbeb            ~ 6.8:1
+     Priority low      #374151 on #ffffff            ~10.3:1
+     Error message     #991b1b on #fef2f2            ~ 7.4:1
+     Focus ring        #2563eb vs #ffffff / #f4f6fb  ~ 5.2:1 (UI ≥ 3:1)
+   ========================================================================== */
+
+:root {
+  /* Neutrals */
+  --color-page: #f4f6fb;
+  --color-surface: #ffffff;
+  --color-surface-muted: #f9fafb;
+  --color-border: #e5e7eb;
+  --color-text: #1f2937;
+  --color-text-muted: #4b5563;
+  --color-heading: #111827;
+
+  /* Brand */
+  --color-brand-900: #1e1b4b;
+  --color-brand-800: #312e81;
+  --color-brand-700: #4338ca;
+  --color-brand-100: #e0e7ff;
+  --color-focus: #2563eb;
+
+  /* Status: text / background / accent */
+  --status-on-track-fg: #166534;
+  --status-on-track-bg: #dcfce7;
+  --status-on-track-accent: #16a34a;
+
+  --status-at-risk-fg: #92400e;
+  --status-at-risk-bg: #fef3c7;
+  --status-at-risk-accent: #d97706;
+
+  --status-blocked-fg: #991b1b;
+  --status-blocked-bg: #fee2e2;
+  --status-blocked-accent: #dc2626;
+
+  --status-completed-fg: #1e40af;
+  --status-completed-bg: #dbeafe;
+  --status-completed-accent: #3b82f6;
+
+  --status-unknown-fg: #374151;
+  --status-unknown-bg: #f3f4f6;
+  --status-unknown-accent: #9ca3af;
+
+  /* Priority */
+  --priority-high-fg: #ffffff;
+  --priority-high-bg: #b42318;
+  --priority-medium-fg: #92400e;
+  --priority-medium-bg: #fffbeb;
+  --priority-medium-border: #d97706;
+  --priority-low-fg: #374151;
+  --priority-low-bg: #ffffff;
+  --priority-low-border: #9ca3af;
+
+  /* Error */
+  --color-error-fg: #991b1b;
+  --color-error-bg: #fef2f2;
+  --color-error-border: #fca5a5;
+
+  /* Spacing scale */
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.5rem;
+  --space-6: 2rem;
+  --space-7: 3rem;
+  --page-gutter: clamp(1rem, 4vw, 2rem);
+
+  /* Radius */
+  --radius-sm: 6px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-pill: 999px;
+
+  /* Shadows (soft, layered) */
+  --shadow-sm: 0 1px 2px rgba(17, 24, 39, 0.06);
+  --shadow-card: 0 1px 2px rgba(17, 24, 39, 0.05),
+    0 4px 12px rgba(17, 24, 39, 0.06);
+  --shadow-card-hover: 0 2px 4px rgba(17, 24, 39, 0.06),
+    0 12px 28px rgba(17, 24, 39, 0.12);
+
+  /* Typography */
+  --font-sans: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue",
+    Arial, "Noto Sans", sans-serif;
+  --font-size-sm: 0.875rem;
+  --font-size-base: 1rem;
+  --font-size-h3: 1.125rem;
+  --font-size-h2: 1.375rem;
+  --font-size-h1: clamp(1.75rem, 1.2rem + 2.5vw, 2.5rem);
+
+  --max-width: 1200px;
+  --transition: 160ms ease-out;
+}
+
+/* --------------------------------------------------------------------------
+   Base
+   -------------------------------------------------------------------------- */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  font-family: var(--font-sans);
+  font-size: var(--font-size-base);
+  line-height: 1.55;
+  color: var(--color-text);
+  background-color: var(--color-page);
+  overflow-wrap: break-word;
+}
+
+h1,
+h2,
+h3 {
+  color: var(--color-heading);
+  line-height: 1.25;
+  margin: 0;
+}
+
+h2 {
+  font-size: var(--font-size-h2);
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+
+p {
+  margin: 0;
+}
+
+a {
+  color: var(--color-brand-700);
+  text-underline-offset: 2px;
+}
+
+:focus-visible {
+  outline: 3px solid var(--color-focus);
+  outline-offset: 2px;
+  border-radius: var(--radius-sm);
+}
+
+/* --------------------------------------------------------------------------
+   Header
+   -------------------------------------------------------------------------- */
+
+.site-header {
+  /* Inner content aligns with the centred .dashboard column */
+  padding-block: var(--space-7) var(--space-6);
+  padding-inline: max(var(--page-gutter), calc((100% - var(--max-width)) / 2 + var(--page-gutter)));
+  color: #ffffff;
+  background:
+    radial-gradient(circle at 85% -20%, rgba(129, 140, 248, 0.45), transparent 55%),
+    linear-gradient(135deg, var(--color-brand-900) 0%, var(--color-brand-800) 55%, var(--color-brand-700) 100%);
+  box-shadow: 0 4px 16px rgba(30, 27, 75, 0.18);
+}
+
+.site-title {
+  color: #ffffff;
+  font-size: var(--font-size-h1);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+/* Decorative "pulse" dot before the title — purely visual, no content. */
+.site-title::before {
+  content: "";
+  flex: none;
+  width: 0.5em;
+  height: 0.5em;
+  border-radius: 50%;
+  background: #4ade80;
+  box-shadow: 0 0 0 0.18em rgba(74, 222, 128, 0.3);
+}
+
+.site-tagline {
+  margin-top: var(--space-2);
+  max-width: 60ch;
+  color: var(--color-brand-100);
+  font-size: 1.0625rem;
+}
+
+/* --------------------------------------------------------------------------
+   Main container
+   -------------------------------------------------------------------------- */
+
+.dashboard {
+  flex: 1 0 auto;
+  width: 100%;
+  max-width: var(--max-width);
+  margin-inline: auto;
+  padding: var(--space-6) var(--page-gutter) var(--space-7);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+}
+
+/* --------------------------------------------------------------------------
+   Summary chips
+   -------------------------------------------------------------------------- */
+
+.pulse-summary {
+  /* Equal-width chips that reflow 4 → 2 → 1 columns without ragged wrapping */
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 9.5rem), 1fr));
+  gap: var(--space-3);
+}
+
+/* On load error the script leaves the summary empty — remove it (and its
+   flex gap in .dashboard) instead of leaving a blank band. */
+.pulse-summary:empty {
+  display: none;
+}
+
+.summary-chip {
+  --chip-accent: var(--status-unknown-accent);
+  display: inline-flex;
+  align-items: baseline;
+  gap: var(--space-2);
+  min-width: 0;
+  padding: var(--space-2) var(--space-4);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-inline-start: 4px solid var(--chip-accent);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
+}
+
+.summary-count {
+  font-size: 1.5rem;
+  font-weight: 800;
+  line-height: 1.1;
+  color: var(--color-heading);
+  font-variant-numeric: tabular-nums;
+}
+
+.summary-label {
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  color: var(--color-text-muted);
+}
+
+.summary-chip--on-track { --chip-accent: var(--status-on-track-accent); }
+.summary-chip--at-risk { --chip-accent: var(--status-at-risk-accent); }
+.summary-chip--blocked { --chip-accent: var(--status-blocked-accent); }
+.summary-chip--completed { --chip-accent: var(--status-completed-accent); }
+.summary-chip--unknown { --chip-accent: var(--status-unknown-accent); }
+
+/* --------------------------------------------------------------------------
+   Status / empty states
+   -------------------------------------------------------------------------- */
+
+.status-message {
+  padding: var(--space-3) var(--space-4);
+  color: var(--color-text-muted);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
+}
+
+/* Collapse the live region visually when it has nothing to say. */
+.status-message:empty {
+  display: none;
+}
+
+.status-message--error {
+  color: var(--color-error-fg);
+  background: var(--color-error-bg);
+  border-color: var(--color-error-border);
+  border-inline-start: 4px solid var(--status-blocked-accent);
+  font-weight: 600;
+}
+
+.empty-state {
+  padding: var(--space-7) var(--space-5);
+  text-align: center;
+  color: var(--color-text-muted);
+  background: var(--color-surface-muted);
+  border: 2px dashed var(--color-border);
+  border-radius: var(--radius-lg);
+}
+
+/* --------------------------------------------------------------------------
+   Projects section and grid
+   -------------------------------------------------------------------------- */
+
+.projects {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+/* Empty list (error or zero projects) should not add an extra gap under the h2;
+   .empty-state or the error message carries the explanation instead. */
+.project-grid:empty {
+  display: none;
+}
+
+.project-grid {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  /* min(100%, 280px) prevents overflow at 375px and at 200% zoom.
+     ~1 col ≤ 375px, 2 cols at tablet, 3 cols at ≥ 1280px (1200px container). */
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 280px), 1fr));
+  gap: var(--space-5);
+}
+
+/* --------------------------------------------------------------------------
+   Project card
+   -------------------------------------------------------------------------- */
+
+.project-card {
+  --card-accent: var(--status-unknown-accent);
+  display: flex;
+  min-width: 0;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-top: 4px solid var(--card-accent);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-card);
+  transition: transform var(--transition), box-shadow var(--transition);
+}
+
+.project-card:hover,
+.project-card:focus-within {
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-card-hover);
+}
+
+.project-card[data-status="on-track"] { --card-accent: var(--status-on-track-accent); }
+.project-card[data-status="at-risk"] { --card-accent: var(--status-at-risk-accent); }
+.project-card[data-status="blocked"] { --card-accent: var(--status-blocked-accent); }
+.project-card[data-status="completed"] { --card-accent: var(--status-completed-accent); }
+.project-card[data-status="unknown"] { --card-accent: var(--status-unknown-accent); }
+
+/* Completed work recedes slightly so active work stands out (text stays ≥ 4.5:1). */
+.project-card[data-status="completed"] {
+  background: var(--color-surface-muted);
+}
+
+.project-card__body {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  padding: var(--space-5);
+}
+
+.project-name {
+  font-size: var(--font-size-h3);
+  font-weight: 700;
+}
+
+.project-badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+
+.project-summary {
+  color: var(--color-text);
+  font-size: 0.9375rem;
+}
+
+/* Metadata: label/value pairs */
+.project-meta {
+  margin: 0;
+  margin-top: auto; /* pins metadata to card bottom for aligned rows */
+  padding-top: var(--space-3);
+  border-top: 1px solid var(--color-border);
+  display: grid;
+  grid-template-columns: max-content minmax(0, 1fr);
+  column-gap: var(--space-3);
+  row-gap: var(--space-1);
+  font-size: var(--font-size-sm);
+}
+
+.project-meta dt {
+  color: var(--color-text-muted);
+  font-weight: 600;
+}
+
+.project-meta dd {
+  margin: 0;
+  min-width: 0;
+  color: var(--color-text);
+}
+
+.project-owner {
+  font-weight: 600;
+}
+
+.project-activity {
+  color: var(--color-text);
+}
+
+/* Narrow cards / heavy zoom: stack dt above dd */
+@media (max-width: 400px) {
+  .project-meta {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .project-meta dd + dt {
+    margin-top: var(--space-2);
+  }
+}
+
+/* --------------------------------------------------------------------------
+   Badges (always carry text — colour is never the only signal)
+   -------------------------------------------------------------------------- */
+
+.status-badge,
+.priority-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375em;
+  padding: 0.2em 0.7em;
+  font-size: 0.8125rem;
+  font-weight: 700;
+  line-height: 1.4;
+  border: 1px solid transparent;
+  border-radius: var(--radius-pill);
+  /* Known labels ("On track", "Medium priority") stay on one line in a ≥280px
+     card; unexpected fallbacks such as "Unknown (…)" / "Priority: …" may wrap
+     rather than overflow the card. */
+  max-width: 100%;
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+
+/* Small dot on status badges as a secondary visual cue */
+.status-badge::before {
+  content: "";
+  width: 0.5em;
+  height: 0.5em;
+  border-radius: 50%;
+  background: currentColor;
+  flex: none;
+}
+
+.status-badge--on-track {
+  color: var(--status-on-track-fg);
+  background: var(--status-on-track-bg);
+  border-color: #bbf7d0;
+}
+
+.status-badge--at-risk {
+  color: var(--status-at-risk-fg);
+  background: var(--status-at-risk-bg);
+  border-color: #fde68a;
+}
+
+.status-badge--blocked {
+  color: var(--status-blocked-fg);
+  background: var(--status-blocked-bg);
+  border-color: #fecaca;
+}
+
+.status-badge--completed {
+  color: var(--status-completed-fg);
+  background: var(--status-completed-bg);
+  border-color: #bfdbfe;
+}
+
+.status-badge--unknown {
+  color: var(--status-unknown-fg);
+  background: var(--status-unknown-bg);
+  border-color: #d1d5db;
+}
+
+.priority-badge--high {
+  color: var(--priority-high-fg);
+  background: var(--priority-high-bg);
+  border-color: var(--priority-high-bg);
+}
+
+.priority-badge--medium {
+  color: var(--priority-medium-fg);
+  background: var(--priority-medium-bg);
+  border-color: var(--priority-medium-border);
+}
+
+.priority-badge--low {
+  color: var(--priority-low-fg);
+  background: var(--priority-low-bg);
+  border-color: var(--priority-low-border);
+}
+
+/* --------------------------------------------------------------------------
+   Footer
+   -------------------------------------------------------------------------- */
+
+.site-footer {
+  padding: var(--space-5) var(--page-gutter);
+  text-align: center;
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
+  background: var(--color-surface);
+  border-top: 1px solid var(--color-border);
+}
+
+.site-footer code,
+.status-message code {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 0.9em;
+  padding: 0.1em 0.35em;
+  background: var(--status-unknown-bg);
+  border-radius: 4px;
+}
+
+/* --------------------------------------------------------------------------
+   Utilities
+   -------------------------------------------------------------------------- */
+
+/* The script toggles the [hidden] attribute on .status-message; make sure no
+   author display rule can ever override it. */
+[hidden] {
+  display: none !important;
+}
+
+.visually-hidden {
+  position: absolute !important;
+  width: 1px !important;
+  height: 1px !important;
+  padding: 0 !important;
+  margin: -1px !important;
+  overflow: hidden !important;
+  clip: rect(0, 0, 0, 0) !important;
+  white-space: nowrap !important;
+  border: 0 !important;
+}
+
+/* --------------------------------------------------------------------------
+   Responsive tweaks
+   -------------------------------------------------------------------------- */
+
+@media (max-width: 600px) {
+  .site-header {
+    padding-block: var(--space-6) var(--space-5);
+  }
+
+  .dashboard {
+    padding-top: var(--space-5);
+  }
+
+  .project-card__body {
+    padding: var(--space-4);
+  }
+}
+
+/* --------------------------------------------------------------------------
+   Motion and contrast preferences
+   -------------------------------------------------------------------------- */
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    transition: none !important;
+    animation: none !important;
+  }
+
+  .project-card:hover,
+  .project-card:focus-within {
+    transform: none;
+  }
+}
+
+@media (forced-colors: active) {
+  .status-badge,
+  .priority-badge,
+  .summary-chip,
+  .project-card {
+    border: 1px solid CanvasText;
+  }
+}

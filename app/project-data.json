@@ -1,0 +1,53 @@
+{
+  "lastUpdated": "2026-11-16",
+  "projects": [
+    {
+      "name": "Docs Refresh",
+      "owner": "Mona Lisa",
+      "status": "on-track",
+      "recentActivity": "Merged PR #42 with the new getting-started guide – 2 days ago",
+      "priority": "medium",
+      "summary": "Rewriting the contributor docs so new folks can ship a first PR in under an hour."
+    },
+    {
+      "name": "CI Pipeline Upgrade",
+      "owner": "Hubot",
+      "status": "at-risk",
+      "recentActivity": "Flaky integration tests failed 3 of the last 10 runs – yesterday",
+      "priority": "high",
+      "summary": "Moving builds to reusable workflows. Test flakiness is slowing reviews, so help with stabilising tests is welcome."
+    },
+    {
+      "name": "Accessibility Audit",
+      "owner": "Ada Okafor",
+      "status": "blocked",
+      "recentActivity": "Waiting on design tokens for the colour palette – 5 days ago",
+      "priority": "high",
+      "summary": "Fixing contrast and keyboard issues across the app. Blocked until the new colour tokens land."
+    },
+    {
+      "name": "Release 2.0 Notes",
+      "owner": "Sam Rivera",
+      "status": "completed",
+      "recentActivity": "Published the release notes and closed the milestone – 1 week ago",
+      "priority": "low",
+      "summary": "Release notes for 2.0 are live. Thanks to everyone who reviewed the changelog."
+    },
+    {
+      "name": "Issue Triage Bot",
+      "owner": "Priya Shah",
+      "status": "on-track",
+      "recentActivity": "Added auto-labelling for bug reports in PR #57 – 3 days ago",
+      "priority": "low",
+      "summary": "A small bot that labels new issues so maintainers can find good first issues faster."
+    },
+    {
+      "name": "Performance Budget",
+      "owner": "Leo Martin",
+      "status": "at-risk",
+      "recentActivity": "Bundle size grew 12% after the charts experiment – 4 days ago",
+      "priority": "medium",
+      "summary": "Keeping page load under two seconds. Looking for volunteers to profile the slowest pages."
+    }
+  ]
+}
